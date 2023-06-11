@@ -29,7 +29,7 @@ const AppRoutes = () => {
                     <Route exact path="/Unit/:id" element={<UnitContent/>} />
 
                     <Route exact path="/article" element={<ArticleContent/>} />
-                    <Route exact path="/article/View" element={<ViewContent/>} />
+                    <Route exact path="/article/View/:id" element={<ViewContent/>} />
                     <Route exact path="/Unit/View/:id" element={<ViewKT/>} />
                     <Route exact path="/edit/:id" element={<Edit/>} />
                     

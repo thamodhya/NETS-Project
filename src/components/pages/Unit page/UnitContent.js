@@ -48,7 +48,7 @@ const UnitContent = (props) => {
                     <div className="card-body">
                         <div className="container p-3">
                          
-                        <Unit></Unit>
+                        <Unit id={id}></Unit>
                         </div>
                                               
                     </div>

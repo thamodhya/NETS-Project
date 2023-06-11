@@ -1,18 +1,12 @@
- 
- 
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import Questions from "./Questions";
-import ConfirmSubmit from './ConfirmSubmit';
 
 const Quiz = (props) => {
   const { id } = useParams();
   const [quizs, setquizs] = useState([]);
   const [answers, setAnswers] = useState({});
-
-   
 
   const [quizSubmission, setQuizSubmission] = useState({
     questions: []
@@ -35,10 +29,7 @@ const Quiz = (props) => {
     const questionValue = quizs[questionIndex].question;
     const answers = quizs[questionIndex].options;
     const correctAnswer = quizs[questionIndex].correctAnswer;
-    const selectedOptionIndex = quizs[questionIndex].options.findIndex(option => option === submittedAnswer);
-     
-  
-    
+    const selectedOptionIndex = quizs[questionIndex].options.findIndex(option => option === submittedAnswer);   
 
     setAnswers(prevAnswers => ({
       ...prevAnswers,
@@ -74,10 +65,6 @@ const Quiz = (props) => {
       })}
       <br />
        
-      <ConfirmSubmit
-  unitId={id}
-  quizSubmission={quizSubmission}
-/>
     </div>
   );
 };

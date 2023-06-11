@@ -1,10 +1,23 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from 'axios';
 import NavBar from "../NavBar";
 import Pdf from './Pdf';
 
 const ViewContent = () => {
+     const articleId = useParams();
+    const [article, setArticle] = useState([]);
+    useEffect(() => {
+        console.log(articleId.id);
+        axios.get(`http://localhost:1337/arts/${articleId.id}`)
+          .then(response => {
+            setArticle(response.data);
+            console.log(response.data)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }, [articleId.id]);
     return (
         <React.Fragment>
             <div style={{backgroundColor: "#fefefe"}}> 
@@ -45,7 +58,7 @@ const ViewContent = () => {
                         <div className="container p-3">
                         <h4 style={{ font: "25px" , color: "#000000" }}>Article 01</h4>
                         <br></br>
-                            <Pdf/>
+                            <Pdf url={article}/>
                         </div>     
                     </div>
                      

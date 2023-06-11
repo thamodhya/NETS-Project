@@ -1,5 +1,4 @@
 import Tasks from './Tasks';
- 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
  
@@ -16,23 +15,16 @@ const UnitList = () => {
       });
   }, []);
 
-   
-   
-
   return (
-    <div>
-       
+    <div>       
             <div> 
           {units.map(unit => {
             return (
               <Tasks key={unit._id} unit={unit} />
             )
           })}
-          </div>
-            
-          </div>
-         
-    
+          </div>         
+          </div>  
   );
 }
 

@@ -1,6 +1,5 @@
 import React, { useState ,useEffect} from 'react';
 import { Link } from "react-router-dom";
- 
 import { useParams } from "react-router-dom";
 import axios from 'axios';
 
@@ -28,8 +27,6 @@ useEffect(() => {
     });
 }, [id]);
  
-
-
 
     return (
         <React.Fragment>
@@ -84,7 +81,7 @@ useEffect(() => {
                      
                     <div class="d-grid gap-2 col-6 mx-auto">                    
                      
-                    <Link to={'/quiz/'+id}><button type="button" class="btn btn-secondary form-control" >Quiz</button></Link>
+                    <Link to={'/quiz/'+id}><button type="button" class="btn btn-secondary form-control" >View Quiz</button></Link>
                     <QuizPopup id={id}/>
                     </div>
                     

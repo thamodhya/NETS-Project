@@ -6,6 +6,9 @@ import NavBar from '../NavBar';
 const Article = (props) => (
   <tr>
     <td>
+      {props.article.chapterName}
+    </td>
+    <td>
       {props.article.articleName}
     </td>
     <td>
@@ -54,6 +57,7 @@ const UnitHistory = () => {
       <table className="table table-striped" style={{ marginTop: 20 }}>
         <thead>
           <tr>
+          <th>Chapter Name</th>
             <th>Article Name</th>
             <th>Article Description</th>
             <th>Previous Article Name</th>

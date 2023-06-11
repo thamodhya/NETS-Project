@@ -1,20 +1,13 @@
- 
-
-
- 
-
 import React from 'react';
 import { Link } from "react-router-dom";
 import NavBar from './NavBar';
  
-
 const EditHistory = () => {
     
   return (
     <React.Fragment>
       <NavBar></NavBar>
-      <div style={{backgroundColor: "#fefefe", height: "100vh"}} className="d-flex align-items-center">
-       
+      <div style={{backgroundColor: "#fefefe", height: "100vh"}} className="d-flex align-items-center">   
         <div className="container p-4 text-center">
           <div className="d-grid gap-2 col-6 mx-auto">
             <Link to={"/editunits"}><button type="button" class="btn btn-secondary form-control" >Unit History</button></Link>

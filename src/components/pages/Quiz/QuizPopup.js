@@ -3,8 +3,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import swal from 'sweetalert';
+import moment from 'moment';
 
 const QuizPopup = ({ id }) => {
+  const userid = "648050d3b39dcbdf90027b5a";
   const navigate = useNavigate();
   const [quizData, setQuizData] = useState({});
   const [startTime] = useState(+new Date());
@@ -13,11 +15,29 @@ const QuizPopup = ({ id }) => {
   const [quizSubmission, setQuizSubmission] = useState({
     unitId: id,
     questions: [],
+    attemptedTime: 0, // Add the attemptedTime field
   });
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [attemptedTime, setAttemptedTime] = useState(0);
+  const [submitted, setSubmitted] = useState(false); // Add a state to track the submission status
 
-
+  //user can access the quiz only once
+  
+  // useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:1337/submissions/${id}/${userid}`)
+  //     .then((response) => {
+  //       const existingSubmission = response.data;
+  //       if (existingSubmission) {
+  //         setSubmitted(true); // Set the hasSubmitted state to true if a submission exists
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       swal('Oops!', 'Something went wrong. Please try again.', 'error');
+  //     });
+  // }, [id, userid]);
 
   useEffect(() => {
     axios
@@ -44,90 +64,179 @@ const QuizPopup = ({ id }) => {
     });
   
     handleAnswerSubmit(questionIndex, selectedOptionIndex);
-  };
-   
-   
+  };  
+  
+  // const handleAnswerSubmit = (questionIndex, selectedOptionIndex) => {
+  //   const question = quizData.questions[questionIndex];
+  //   const { question: questionValue, options: answers, correctAnswer } = question;
+
+  //   setQuizSubmission(prevSubmission => {
+  //     const newQuestions = [...prevSubmission.questions];
+  //     newQuestions[questionIndex] = {
+  //       questionValue,
+  //       answers,
+  //       correctAnswer,
+         
+  //       submittedAnswer: selectedOptionIndex,
+  //     };
+  //     return { ...prevSubmission, questions: newQuestions };
+  //   });
+  // };
 
   const handleAnswerSubmit = (questionIndex, selectedOptionIndex) => {
     const question = quizData.questions[questionIndex];
     const { question: questionValue, options: answers, correctAnswer } = question;
-
-    setQuizSubmission(prevSubmission => {
+  
+    setQuizSubmission((prevSubmission) => {
       const newQuestions = [...prevSubmission.questions];
-      newQuestions[questionIndex] = {
-        questionValue,
-        answers,
-        correctAnswer,
-         
-        submittedAnswer: selectedOptionIndex,
-      };
+      if (selectedOptionIndex === -1) {
+        newQuestions[questionIndex] = {
+          questionValue,
+          answers,
+          correctAnswer,
+          submittedAnswer: null, // Save null for unanswered questions
+        };
+      } else {
+        newQuestions[questionIndex] = {
+          questionValue,
+          answers,
+          correctAnswer,
+          submittedAnswer: selectedOptionIndex,
+        };
+      }
       return { ...prevSubmission, questions: newQuestions };
     });
   };
+  
    
   const saveQuizSubmission = useCallback(() => {
+    const updatedQuizSubmission = {
+      ...quizSubmission,
+      attemptedTime: attemptedTime, // Add the attempted time to the quiz submission
+       
+    };
+    // axios
+    //   .post(`http://localhost:1337/submissions/${id}/${userid}`, updatedQuizSubmission)
+    //   .then((response) => {
+    //     console.log(response.data);
+    //     swal('Quiz submitted!', 'Your quiz has been submitted.', 'success');
+    //     setSubmitted(true); // Set the submission status to true
+    // navigate(`/quiz/view/${id}`);
+    // window.location.reload(); // Auto-refresh the page
+    //   })
     axios
-      .post(`http://localhost:1337/submissions/${id}`, quizSubmission)
-      .then((response) => {
-        console.log(response.data);
-        swal('Quiz submitted!', 'Your quiz has been submitted.', 'success');
-    navigate(`/quiz/view/${id}`);
-      })
+  .post(`http://localhost:1337/submissions/${id}/${userid}`, updatedQuizSubmission)
+  .then((response) => {
+    console.log(response.data);
+    swal('Quiz submitted!', 'Your quiz has been submitted.', 'success')
+      .then(() => {
+        setSubmitted(true); // Set the submission status to true
+        navigate(`/quiz/view/${id}`);
+        window.location.reload(); // Auto-refresh the page
+      });
+  })
       .catch((error) => {
         console.log(error);
         swal('Oops!', 'Something went wrong. Please try again.', 'error');
       });
       console.log(quizSubmission);
-  }, [quizSubmission]);
+  }, [quizSubmission, id, userid, attemptedTime]);
 
+   
   const calculateTimeLeft = () => {
-    const fullTime = quizData.timeLimit * 60 * 1000;
+    const fullTime = quizData.timeLimit * 60 * 1000; // Convert minutes to milliseconds
     const difference = fullTime - (+new Date() - startTime);
     let timeLeft = {};
-
+  
     if (difference > 0) {
+      const totalSeconds = Math.floor(difference / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+  
       timeLeft = {
-        minutes: Math.floor(difference / (1000 * 60)),
-        seconds: Math.floor((difference / 1000) % 60),
+        hours: hours < 10 ? `0${hours}` : hours.toString(),
+        minutes: minutes < 10 ? `0${minutes}` : minutes.toString(),
+        seconds: seconds < 10 ? `0${seconds}` : seconds.toString(),
       };
     }
-
+  
     return timeLeft;
   };
+  
+  
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());   
 
+   
   useEffect(() => {
     const timer = setTimeout(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
-
+  
     return () => clearTimeout(timer);
-  });
-
+  }, [timeLeft]); // Add timeLeft as a dependency to the useEffect hook
+  
   const timerComponents = [];
-
-  if (timeLeft.minutes > 0 || timeLeft.seconds > 0) {
+  
+  if (timeLeft.hours > 0 || timeLeft.minutes > 0 || timeLeft.seconds > 0) {
     timerComponents.push(
       <span>
-        {timeLeft.minutes < 10 ? "0" : ""}
-        {timeLeft.minutes}:{timeLeft.seconds < 10 ? "0" : ""}
-        {timeLeft.seconds}
+        {timeLeft.hours}:{timeLeft.minutes}:{timeLeft.seconds}
       </span>
     );
   } else {
     timerComponents.push(<span>Time's up!</span>);
   }
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+  
+    // Check if time is up and submit the quiz
+    if (timeLeft.hours === "00" && timeLeft.minutes === "00" && timeLeft.seconds === "00")  {
+      const endTime = +new Date(); // Get the current time
+      const attemptedTime = moment(endTime).format('YYYY-MM-DD hh:mm:ss A'); // Calculate the attempted time and format it
+      saveQuizSubmission(attemptedTime); // Pass the attempted time to saveQuizSubmission function
+    }
+  
+    return () => clearTimeout(timer);
+  }, [timeLeft]);
+  
 
   const handleSubmit = () => {
+    const endTime = +new Date(); // Get the current time
+  const remainingTime = timeLeft.minutes * 60 + timeLeft.seconds; // Convert remaining time to seconds
+  const attemptedTime = moment(endTime - remainingTime).format('YYYY-MM-DD hh:mm:ss A'); // Calculate the attempted time and format it
+
+  setAttemptedTime(attemptedTime); // Store the attempted time in state
     setShowConfirmation(false);
   };
 
   const handleConfirm = () => {
     setshowSubmission(false);
+
+    // Submit the quiz when the time is up
+    //saveQuizSubmission(attemptedTime);
+
+    // Submit the quiz only if it hasn't been submitted yet
+  if (!submitted) {
+    saveQuizSubmission(attemptedTime);
+  }
+
   };
 
+
   return (
+    <div>
+      {submitted ? ( // Check if the quiz has been submitted
+        <div>
+          <p>Quiz submitted!</p>
+          {/* Add a loading indicator or a message while redirecting */}
+        </div>
+      ) : (
+    
     <div>
       <button
         style={{width:"650px"}} 
@@ -136,7 +245,7 @@ const QuizPopup = ({ id }) => {
         data-bs-toggle="modal"
         data-bs-target="#confirm-modal"
       >
-        View Quiz
+        Attempt Quiz
       </button>
       <div
         className="modal fade"
@@ -247,17 +356,13 @@ const QuizPopup = ({ id }) => {
             <button
               type="button"
               className="btn btn-secondary"
-            //data-bs-dismiss="modal"
+            
             >
               No
             </button>
             </div>
-          </div>
-                
-  )}
-
-   
-
+          </div>            
+  )} 
       </div>
         )}
     </div>
@@ -265,8 +370,45 @@ const QuizPopup = ({ id }) => {
      </div>
      </div>
      </div>
-  );
+  )};
+  </div>
+  )
 };
  
 
 export default QuizPopup;
+
+//call the backend API to trigger email sending
+    // axios.post('http://localhost:1337/notifications/')
+    // .then((response)=>{
+    //   console.log(response.data);
+    // })
+    // .catch((error)=>{
+    //   console.log(error);
+    // });
+
+    //attemptedTime
+
+  // const handleAnswerSubmit = (questionIndex, selectedOptionIndex) => {
+  //   const question = quizData.questions[questionIndex];
+  //   const { question: questionValue, options: answers, correctAnswer } = question;
+  
+  //   setQuizSubmission((prevSubmission) => {
+  //     const newQuestions = prevSubmission.questions.map((q, index) => {
+  //       if (index === questionIndex) {
+  //         return {
+  //           questionValue,
+  //           answers,
+  //           correctAnswer,
+  //           submittedAnswer: selectedOptionIndex !== -1 ? selectedOptionIndex : null,
+  //         };
+  //       } else if (!prevSubmission.questions[index]) {
+  //         return null;
+  //       } else {
+  //         return q;
+  //       }
+  //     });
+  
+  //     return { ...prevSubmission, questions: newQuestions };
+  //   });
+  // };

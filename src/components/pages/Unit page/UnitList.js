@@ -1,21 +1,31 @@
 import KTs from './KTs';
 import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import axios from 'axios';
  
-const UnitList = () => {
+const UnitList = (props) => {
+  const { id } = useParams();
   const [KTsessions, setKTsessions] = useState([]);
 
+  // useEffect(() => {
+  //   axios.get('http://localhost:1337/kts/')
+  //     .then(response => {
+  //       setKTsessions(response.data);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }, []);
+
   useEffect(() => {
-    axios.get('http://localhost:1337/kts/')
+    axios.get(`http://localhost:1337/kts?unitId=${id}`)
       .then(response => {
         setKTsessions(response.data);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
-
-   
+  }, [id]);
 
   return (
     <div>
@@ -23,7 +33,7 @@ const UnitList = () => {
             <div> 
           {KTsessions.map(KTsession => {
             return (
-              <KTs key={KTsession._id} KTsession={KTsession} />
+              <KTs key={KTsession._id} KTsession={KTsession} unitId={id}/>
             )
           })}
           </div>

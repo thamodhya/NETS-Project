@@ -1,6 +1,3 @@
- 
-
-
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import { FaPencilAlt } from 'react-icons/fa';
@@ -10,10 +7,8 @@ import { useParams } from "react-router-dom";
 
 const EditEntry = (props) => {
   const { id } = useParams();
-
   const [modal, setModal] = useState(null);
    
- 
 const [updatedTodo, setUpdatedTodo] = useState({
   quizName: '',
   quizDesc: '',

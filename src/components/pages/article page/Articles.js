@@ -14,20 +14,14 @@ const Articles = ({ article }) => {
               {article.articleName}
             </h3>
              <div>
-              
               <Edit key={article._id} article={article} />
-             
              </div>
-              
             <p>{article.articleDesc} </p>
-            <div>
-              
+            <div> 
               <Delete key={article._id} article={article} />
-             
              </div>
-              
             </div>
-            <p> <Link to='/article/View'><img src={pdf} height='20px' width='20px' alt='pdf'></img></Link> </p>
+            <p> <Link to={'/article/View/'+article._id}><img src={pdf} height='20px' width='20px' alt='pdf'></img></Link> </p>
             </div>
             </div>
             </div>

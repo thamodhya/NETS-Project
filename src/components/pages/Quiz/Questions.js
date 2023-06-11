@@ -1,15 +1,11 @@
- 
-
 import Edit from "./EditQ";
 import Delete from "./DeleteQ";
 import { useState } from 'react';
 
 const Questions = ({ quiz, unitid, onQuestionSubmit }) => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
-
   const { _id, question, options } = quiz;
 
-  
   const handleOptionChange = (event, index) => {
     setSelectedAnswer(event.target.value);
     onQuestionSubmit(_id, index);
@@ -33,8 +29,7 @@ const Questions = ({ quiz, unitid, onQuestionSubmit }) => {
                   name={`question${_id}`}
                   id={`flexRadioDefault${index}`}
                   value={option}
-                  checked={option === selectedAnswer}
-                  
+                           
                   onChange={(event) => handleOptionChange(event, index)}
                    
                 />

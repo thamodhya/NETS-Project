@@ -1,4 +1,3 @@
-
 import React from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -8,16 +7,39 @@ import swal from "sweetalert";
 const Delete = ({ quiz ,id}) => {
     const navigate = useNavigate();  
 
-  const onDelete = () => {
-    axios.delete(`http://localhost:1337/units/${id}/delete/${quiz._id}`)  
-    .then((res) => {
-      console.log(res.data);
-          swal({
-            icon: "success",
-            text: "Successfully deleted",
-          });
+  // const onDelete = () => {
+  //   axios.delete(`http://localhost:1337/units/${id}/delete/${quiz._id}`)  
+  //   .then((res) => {
+  //     console.log(res.data);
+  //         swal({
+  //           icon: "success",
+  //           text: "Successfully deleted",
+  //         });
           
          
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       swal({
+  //         icon: "warning",
+  //         text: "Error",
+  //       });
+  //     });
+  //   navigate(`/quiz/${id}`);
+     
+  // }
+
+  const onDelete = () => {
+    axios
+      .delete(`http://localhost:1337/units/${id}/delete/${quiz._id}`)
+      .then((res) => {
+        console.log(res.data);
+        swal({
+          icon: "success",
+          text: "Successfully deleted",
+        }).then(() => {
+          window.location.reload(); // Refresh the page
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -26,9 +48,9 @@ const Delete = ({ quiz ,id}) => {
           text: "Error",
         });
       });
-    navigate(`/quiz/${id}`);
-     
-  }
+  };
+  
+  
 
   return (
     <div>
@@ -60,8 +82,6 @@ const Delete = ({ quiz ,id}) => {
         </div>
         </div>
               </div>
-     
-
        
   );
 };
