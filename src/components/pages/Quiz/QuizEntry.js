@@ -5,8 +5,13 @@ import axios from 'axios';
 
 import NavBar from "../NavBar";
 import EditQuizEntry from './EditQuizEntry';
+ 
+import QuizComponent from './QuizAttempt';
+ 
+import Test from './Test';
 import QuizPopup from './QuizPopup';
-
+import Lastchance from './Lastchance';
+ 
 const QuizEntry = (props) => {
   const { id } = useParams();
    
@@ -82,7 +87,12 @@ useEffect(() => {
                     <div class="d-grid gap-2 col-6 mx-auto">                    
                      
                     <Link to={'/quiz/'+id}><button type="button" class="btn btn-secondary form-control" >View Quiz</button></Link>
-                    <QuizPopup id={id}/>
+                    {/* <QuizPopup id={id}/>
+                    <Test id={id}/>
+
+                    <QuizComponent id={id}/> */}
+                     <Lastchance id={id}/>
+                     
                     </div>
                     
                     <br></br>

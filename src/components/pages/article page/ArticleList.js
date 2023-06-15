@@ -17,7 +17,7 @@ const ArticleList = () => {
   }, []); 
 
   // useEffect(() => {
-  //   axios.get(`http://localhost:1337/kts?chapterId=${chapterId}`)
+  //   axios.get(`http://localhost:1337/arts?chapterId=${chapterId}`)
   //     .then(response => {
   //       setarticles(response.data);
   //     })

@@ -2,7 +2,7 @@ import Edit from "./EditQ";
 import Delete from "./DeleteQ";
 import { useState } from 'react';
 
-const Questions = ({ quiz, unitid, onQuestionSubmit }) => {
+const Questions = ({ quiz, unitid, onQuestionSubmit, questionNumber }) => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const { _id, question, options } = quiz;
 
@@ -18,6 +18,7 @@ const Questions = ({ quiz, unitid, onQuestionSubmit }) => {
       <div className="card">
         <div className="container">
           <br />
+          <p>Question {questionNumber}</p>
           <p>{question}</p>
 
           {options.map((option, index) => (

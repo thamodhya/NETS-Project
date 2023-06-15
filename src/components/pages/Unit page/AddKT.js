@@ -275,6 +275,7 @@ const AddKT = (props) => {
   const chapterId = '64848a1cd792d9e0909c70e0';
   const userid = '648050d3b39dcbdf90027b5a';
   const [KTUpload, setKTUpload] = useState(null);
+  const [uploading, setUploading] = useState(false); // New state for tracking upload status
 
   const validationSchema = Yup.object().shape({
     sessionName: Yup.string().required('KT Session name is required'),
@@ -327,6 +328,7 @@ const AddKT = (props) => {
 
       if (KTUpload == null) return;
       const KTRef = ref(storage, `KTsessions/${KTUpload.name + v4()}`);
+      setUploading(true); // Set the uploading state to true
 
       uploadBytes(KTRef, KTUpload).then((snapshot) => {
         getDownloadURL(snapshot.ref).then((url) => {
@@ -348,6 +350,8 @@ const AddKT = (props) => {
               setErrors({});
             });
         });
+      }).finally(() => {
+        setUploading(false); // Set the uploading state to false once the upload is complete
       });
     } catch (err) {
       console.error(err);
@@ -385,9 +389,10 @@ const AddKT = (props) => {
             }}
           />
           {errors.sessionFile && <div className="error">{errors.sessionFile}</div>}
+          {uploading && <p className="upload-status" style={{color:"#013220"}}>Uploading file...</p>}
           <p>Only video files are allowed.</p>
           <br></br>
-          <input type="submit" value="Save KT Session" className="btn btn-primary" />
+          <input type="submit" value="Save KT Session" className="btn btn-primary" disabled={uploading} />
         </div>
       </form>
     </div>

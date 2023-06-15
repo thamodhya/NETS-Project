@@ -119,6 +119,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import swal from "sweetalert";
 
 const AddQuestion = () => {
   const userid = "648050d3b39dcbdf90027b5a";
@@ -166,13 +167,26 @@ const AddQuestion = () => {
   //   setQuestionCount(questionCount + 1);
   // };
 
+   
+
   axios
       .post(`http://localhost:1337/units/${id}/quiz`, newQuestion)
       .then((res) => {
         console.log(res.data);
-        window.location.reload(); // Refresh the page
+        swal({
+          icon: "success",
+          text: "Successfully created",
+        }).then(() => {
+          window.location.reload(); // Refresh the page
+        });
       })
-      .catch((err) => console.log(err));
+      .catch((error) => {
+        console.log(error);
+        swal({
+          icon: "warning",
+          text: "Error",
+        });
+      });
 
     resetForm();
     setQuestionCount(questionCount + 1);

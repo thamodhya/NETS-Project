@@ -53,16 +53,26 @@ const Quiz = (props) => {
 
   return (
     <div>
-      {quizs.map(quiz => {
+      {/* {quizs.map(quiz => {
         return (
           <Questions
             key={quiz._id}
             quiz={quiz}
             unitid={id}
             onQuestionSubmit={handleQuestionSubmit}
+            
           />
         )
-      })}
+      })} */}
+      {quizs.map((quiz, index) => (
+        <Questions
+          key={quiz._id}
+          quiz={quiz}
+          unitid={id}
+          onQuestionSubmit={handleQuestionSubmit}
+          questionNumber={index + 1}
+        />
+      ))}
       <br />
        
     </div>

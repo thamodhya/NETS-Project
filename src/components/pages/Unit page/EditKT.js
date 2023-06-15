@@ -413,6 +413,8 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { storage } from '../../../firebase';
 import { v4 } from 'uuid';
 import * as Yup from 'yup';
+import { Link } from "react-router-dom";
+import video from '../../images/video.png';
 
 const Edit = ({ KTsession, unitId }) => {
   const userid = '648050d3b39dcbdf90027b5a';
@@ -421,6 +423,7 @@ const Edit = ({ KTsession, unitId }) => {
   const [editkts, seteditkts] = useState([]);
   const [updatedKTsession, setUpdatedKTsession] = useState(KTsession);
   const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false); // New state for tracking upload status
 
   const validationSchema = Yup.object().shape({
     sessionName: Yup.string().required('KT Session name is required'),
@@ -481,6 +484,7 @@ const Edit = ({ KTsession, unitId }) => {
         .then(() => {
           // Upload the new file to Firebase Storage
           const newVideoRef = ref(storage, `KTsessions/${updatedFile.name + v4()}`);
+          setUploading(true); // Set the uploading state to true
           uploadBytes(newVideoRef, updatedFile)
             .then((snapshot) => {
               // Get the download URL of the new file
@@ -500,6 +504,9 @@ const Edit = ({ KTsession, unitId }) => {
                 icon: 'warning',
                 text: 'Error',
               });
+            })
+            .finally(() => {
+              setUploading(false); // Set the uploading state to false once the upload is complete
             });
         })
         .catch((error) => {
@@ -609,6 +616,14 @@ const Edit = ({ KTsession, unitId }) => {
                   {errors.sessionDesc && <div className="invalid-feedback">{errors.sessionDesc}</div>}
                 </div>
                 <div className="mb-3">
+                  <label htmlFor="Attachment" className="form-label">Attachment</label>
+                  <div>
+                  {/* <p> <Link to={'/Unit/View/'+KTsession._id}><img src={video} height='20px' width='20px' alt='pdf'></img></Link> </p> */}
+            </div>
+                   
+                </div>
+                <div className="mb-3">
+                <p>If you want to change the file, add the new file here.</p>
                   <input
                     type="file"
                     accept="video/mp4,video/mpeg,video/quicktime,video/x-msvideo"
@@ -620,7 +635,7 @@ const Edit = ({ KTsession, unitId }) => {
                   {errors.sessionFile && <div className="invalid-feedback">{errors.sessionFile}</div>}
                 </div>
                 <div className="modal-footer">
-                  <input type="submit" value="Update KT Session" className="btn btn-primary" />
+                <input type="submit" value={uploading ? 'Uploading...' : 'Update'} className="btn btn-primary" disabled={uploading} />
                 </div>
               </form>
             </div>
