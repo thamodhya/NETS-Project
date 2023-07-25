@@ -1,33 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaTimes } from 'react-icons/fa';
 import swal from "sweetalert";
+import moment from 'moment';
 
 const Delete = ({ quiz ,id}) => {
-    const navigate = useNavigate();  
+  const userid = '648050d3b39dcbdf90027b5a';
+    const navigate = useNavigate(); 
+    const [units, setunits] = useState([]); 
 
-  // const onDelete = () => {
-  //   axios.delete(`http://localhost:1337/units/${id}/delete/${quiz._id}`)  
-  //   .then((res) => {
-  //     console.log(res.data);
-  //         swal({
-  //           icon: "success",
-  //           text: "Successfully deleted",
-  //         });
-          
-         
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       swal({
-  //         icon: "warning",
-  //         text: "Error",
-  //       });
-  //     });
-  //   navigate(`/quiz/${id}`);
-     
-  // }
+  useEffect(() => {
+    axios
+      .get(`http://localhost:1337/units/${id}`)
+      .then((response) => {
+        setunits(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
 
   const onDelete = () => {
     axios
@@ -48,6 +40,26 @@ const Delete = ({ quiz ,id}) => {
           text: "Error",
         });
       });
+
+      const deleteData = {
+        createdBy:quiz.createdBy,
+        deletedBy: userid,
+        unitName: units.unitName,
+      quizname: units.quiz.quizName,
+      question: quiz.question,
+      options: quiz.options,
+      correctAnswer: quiz.correctAnswer,
+         
+        //updated_at: moment.utc().format('YYYY-MM-DD hh:mm:ss A'),
+      };
+  
+      axios.post("http://localhost:1337/deletequestions/add", deleteData)
+        .then(() => {
+          console.log("Delete history data saved successfully");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   };
   
   

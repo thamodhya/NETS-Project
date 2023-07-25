@@ -5,7 +5,7 @@ import swal from 'sweetalert';
 import moment from 'moment';
 import Swal from "sweetalert2";
 
-const Lastchance = ({ id }) => {
+const Quiz = ({ id }) => {
   //const userid = "648050d3b39dcbdf90027b5a";
   const userid = "648995cc75de0662cca62b0a";
   const depid = "6487de14172197d2235cd07f";
@@ -42,20 +42,20 @@ const Lastchance = ({ id }) => {
   }, [id]);
 
   //user can access the quiz only once
-//   useEffect(() => {
-//     axios
-//       .get(`http://localhost:1337/submissions/find/${id}/${userid}`)
-//       .then((response) => {
-//         const existingSubmission = response.data;
-//         if (existingSubmission) {
-//           setSubmitted(true); // Set the hasSubmitted state to true if a submission exists
-//         }
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         swal('Oops!', 'Something went wrong. Please try again.', 'error');
-//       });
-//   }, [id, userid]);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:1337/submissions/find/${id}/${userid}`)
+      .then((response) => {
+        const existingSubmission = response.data;
+        if (existingSubmission) {
+          setSubmitted(true); // Set the hasSubmitted state to true if a submission exists
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        //swal('Oops!', 'Something went wrong. Please try again.', 'error');
+      });
+  }, [id, userid]);
 
    
   const handleAttemptQuiz = useCallback(() => {
@@ -95,41 +95,7 @@ const Lastchance = ({ id }) => {
     setSelectedAnswers(updatedAnswers);
   };
 
-//   const saveQuizSubmission = useCallback(() => {
-//     const questions = quizData.questions.map((question, questionIndex) => {
-//       const selectedAnswer =
-//         selectedAnswers[questionIndex] !== null ? selectedAnswers[questionIndex] : null;
-  
-//       return {
-//         questionValue: question.question,
-//         answers: question.options,
-//         correctAnswer: question.correctAnswer,
-//         submittedAnswer: selectedAnswer,
-//         attemptedTime: attemptedTime, // Add the attempted time to the quiz submission
-//       };
-//     });
-  
-//     const submittedTime = new Date().toLocaleString();
-  
-//     axios
-//       .post(`http://localhost:1337/submissions/${id}/${userid}/${chapterId}/${depid}`, {
-//         questions,
-//         submittedTime,
-//         attemptedTime,
-//       })
-//       .then((response) => {
-//         console.log(response.data);
-//         swal("Quiz submitted!", "Your quiz has been submitted.", "success").then(() => {
-//           navigate(`/quiz/view/${id}`);
-//           window.location.reload();
-//         });
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         swal("Oops!", "Something went wrong. Please try again.", "error");
-//       });
-//   }, [attemptedTime]);
-
+ 
 const saveQuizSubmission = useCallback(() => {
     const questions = quizData.questions.map((question, questionIndex) => {
       const selectedAnswer = selectedAnswers[questionIndex] !== null ? selectedAnswers[questionIndex] : -1;
@@ -156,6 +122,7 @@ const saveQuizSubmission = useCallback(() => {
         swal("Quiz submitted!", "Your quiz has been submitted.", "success").then(() => {
           navigate(`/quiz/view/${id}`);
           window.location.reload();
+          setSubmitted(true);
         });
       })
       .catch((error) => {
@@ -223,19 +190,21 @@ const saveQuizSubmission = useCallback(() => {
     }, 1000);
   
     // Check if time is up and submit the quiz
-    if (
-      timeLeft.hours === "00" &&
-      timeLeft.minutes === "00" &&
-      timeLeft.seconds === "00"
-    ) {
-      const endTime = +new Date(); // Get the current time
-      const attemptedTime = moment(endTime).format("YYYY-MM-DD hh:mm:ss A"); // Calculate the attempted time and format it
-      saveQuizSubmission(attemptedTime); // Pass the attempted time to saveQuizSubmission function
+    if(!submitted){
+        if (
+            timeLeft.hours === "00" &&
+            timeLeft.minutes === "00" &&
+            timeLeft.seconds === "00"
+          ) {
+            const endTime = +new Date(); // Get the current time
+            const attemptedTime = moment(endTime).format("YYYY-MM-DD hh:mm:ss A"); // Calculate the attempted time and format it
+            saveQuizSubmission(attemptedTime); // Pass the attempted time to saveQuizSubmission function
+          }
     }
+     
   
     return () => clearTimeout(timer);
   }, [timeLeft]);
-  
   
   const handleSubmit = () => {
     const endTime = +new Date(); // Get the current time
@@ -304,7 +273,7 @@ return (
               data-bs-target="#confirm-modaltest"
               onClick={handleAttemptQuiz}
             >
-              Attempt Quiz Test
+              Attempt Quiz
             </button>
             <div
               className="modal fade"
@@ -443,4 +412,5 @@ return (
 
  
 
-export default Lastchance;
+export default Quiz;
+
